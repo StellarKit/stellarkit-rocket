@@ -13,15 +13,13 @@
         <div>{{ item.title }}</div>
       </div>
     </div>
-
     <div v-else-if="dialogMode === 'send'">
       Balances
     </div>
     <div v-else-if="dialogMode === 'ticker'">
       <ticker-component />
     </div>
-
-    <div v-if='showMenu' class='overlay-menu' @click='showMenu = false'>
+    <div v-else-if="dialogMode === 'menu'" class='content-menu'>
       <v-btn small dark @click.native='buttonClick("ticker")'>
         Ticker
       </v-btn>
@@ -58,8 +56,8 @@ export default {
   },
   data() {
     return {
-      showMenu: false,
-      dialogMode: 'ticker',
+      savedDialogMode: '',
+      dialogMode: '',
       status: '',
       accounts: [{
           name: 'Wallet',
@@ -95,6 +93,9 @@ export default {
       }]
     }
   },
+  mounted() {
+    this.updateDialogMode('ticker')
+  },
   methods: {
     server() {
       if (!this._stellarAPIServer) {
@@ -111,12 +112,30 @@ export default {
 
       return this._serverAPI
     },
+    updateDialogMode(id) {
+      switch (id) {
+        case 'menu':
+          if (this.dialogMode === id) {
+            this.dialogMode = this.savedDialogMode
+            this.setWindowSizeForMode(this.dialogMode)
+          } else {
+            this.savedDialogMode = this.dialogMode
+            this.setWindowSizeForMode(id)
+          }
+          break
+        case 'send':
+        case 'ticker':
+          this.setWindowSizeForMode(id)
+          break
+        default:
+          console.log('buttonClick not handled: ' + id)
+      }
+      this.dialogMode = id
+    },
     setWindowSizeForMode(id) {
       switch (id) {
         case 'menu':
           Helper.setWindowSize(300, 250)
-          break
-        case 'quit':
           break
         case 'send':
           Helper.setWindowSize(400, 400, false)
@@ -130,33 +149,21 @@ export default {
     },
     buttonClick(id) {
       switch (id) {
-        case 'menu':
-          this.showMenu = !this.showMenu
-
-          if (this.showMenu) {
-            this.setWindowSizeForMode(id)
-          } else {
-            this.setWindowSizeForMode(this.dialogMode)
-          }
-          break
-        case 'quit':
-          Helper.quitApp()
-          break
-        case 'send':
-          this.dialogMode = id
-          this.setWindowSizeForMode(id)
-          break
         case 'ticker':
-          this.dialogMode = id
-          this.setWindowSizeForMode(id)
+        case 'menu':
+        case 'send':
+          this.updateDialogMode(id)
           break
         case 'donate':
           shell.openExternal('https://stellarkit.io/#/donate')
-          this.setWindowSizeForMode(this.dialogMode)
+          this.updateDialogMode(this.savedDialogMode)
           break
         case 'coin-market':
           shell.openExternal('https://coinmarketcap.com/')
-          this.setWindowSizeForMode(this.dialogMode)
+          this.updateDialogMode(this.savedDialogMode)
+          break
+        case 'quit':
+          Helper.quitApp()
           break
         default:
           console.log('buttonClick not handled: ' + id)
@@ -202,7 +209,7 @@ $alpha: 0.7;
     .rocket-content {
         position: relative;
         flex: 1 1 auto;
-        background: linear-gradient(to bottom, rgba(24,24,24, $alpha), rgba(0,0,0,$alpha));
+        background: rgba(0,0,0, $alpha);
         color: rgb(80,255, 80);
         display: flex;
         flex-direction: column;
@@ -214,15 +221,7 @@ $alpha: 0.7;
             overflow: hidden;
         }
 
-        .overlay-menu {
-            position: absolute;
-            z-index: 1;
-            background: rgba(0,0,0,.8);
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-
+        .content-menu {
             display: flex;
             flex-direction: column;
             justify-content: center;
