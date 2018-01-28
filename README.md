@@ -7,9 +7,15 @@ To build and run:
 yarn install
 yarn dev
 ```
+To build installer
+```
+yarn dist
+```
 
 ### Donations
-If you like this code, a [`donation`](https://stellarkit.io/#/donate) would be appreciated.
+If you like the code, a donation would be appreciated. Even a single XLM!
+
+Click here for the [`donation page`](https://stellarkit.io/#/donate). Nano support!
 
 ```
 XLM: GCYQSB3UQDSISB5LKAL2OEVLAYJNIR7LFVYDNKRMLWQKDCBX4PU3Z6JP
@@ -30,7 +36,7 @@ Thanks to the power of `electron-webpack` this template comes packed with...
 
 Make sure to check out [`electron-webpack`'s documentation](https://webpack.electron.build/) for more details.
 
-## Getting Started
+### Getting Started
 Simply clone down this reposity, install dependencies, and get started on your application.
 
 The use of the [yarn](https://yarnpkg.com/) package manager is **strongly** recommended, as opposed to using `npm`.

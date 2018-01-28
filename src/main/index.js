@@ -122,6 +122,7 @@ class MainApp {
       width: width,
       height: height,
       frame: false,
+      title: 'Stellar Rocket',
       transparent: true,
       resizable: false,
       webPreferences: {
@@ -144,6 +145,11 @@ class MainApp {
     // if (isDevelopment) {
     //   window.webContents.openDevTools()
     // }
+
+    // prevent window name changes
+    window.on('page-title-updated', (event) => {
+      event.preventDefault()
+    })
 
     window.on('resize', () => {
       this.settings.set(this.prefKey('win_width'), window.getSize()[0])
