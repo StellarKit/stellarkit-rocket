@@ -47,6 +47,11 @@
 import Helper from '../js/helper.js'
 import PriceTicker from './PriceTicker.vue'
 const shell = require('electron').shell
+import {
+  StellarAPIServer,
+  StellarAPI
+} from 'stellar-js-utils'
+const StellarSdk = require('stellar-sdk')
 
 export default {
   components: {
@@ -92,6 +97,21 @@ export default {
     }
   },
   methods: {
+    server() {
+      if (!this._stellarAPIServer) {
+        this._stellarAPIServer = new StellarAPIServer('https://horizon-testnet.stellar.org', true)
+        // this._stellarAPIServer = new StellarAPIServer('https://horizon.stellar.org', false)
+      }
+
+      return this._stellarAPIServer
+    },
+    serverAPI() {
+      if (!this._serverAPI) {
+        this._serverAPI = new StellarAPI(this.server())
+      }
+
+      return this._serverAPI
+    },
     buttonClick(id) {
       switch (id) {
         case 'menu':
@@ -117,7 +137,22 @@ export default {
           shell.openExternal('https://stellarkit.io/#/donate')
           break
         case 'coin-market':
-          shell.openExternal('https://coinmarketcap.com/')
+          {
+            // shell.openExternal('https://coinmarketcap.com/')
+            const asset = new StellarSdk.Asset('LMB', 'GCYQSB3UQDSISB5LKAL2OEVLAYJNIR7LFVYDNKRMLWQKDCBX4PU3Z6JP')
+            try {
+              console.log(JSON.stringify(asset))
+              const xdr = asset.toXDRObject()
+              console.log(JSON.stringify(xdr))
+              const newAsset = StellarSdk.Asset.fromOperation(xdr)
+              console.log(JSON.stringify(newAsset))
+            } catch (error) {
+              console.log(error)
+            }
+
+            this.serverAPI().test()
+          }
+
           break
         default:
           console.log('buttonClick not handled: ' + id)
