@@ -26,7 +26,7 @@
    }
 
    static keyForKey(key) {
-     return 'pref-' + key
+     return 'qpref-' + key
    }
 
    static get(key) {
