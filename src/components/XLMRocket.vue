@@ -14,30 +14,30 @@
       </div>
     </div>
 
-    <div v-else-if="dialogMode === 'balances'">
+    <div v-else-if="dialogMode === 'send'">
       Balances
     </div>
     <div v-else-if="dialogMode === 'ticker'">
       <ticker-component />
     </div>
-  </div>
 
-  <div v-if='showMenu' class='overlay-menu' @click='showMenu = false'>
-    <v-btn small round @click.native='buttonClick("ticker")'>
-      <v-icon>monetization_on</v-icon>Ticker
-    </v-btn>
-    <v-btn small round @click.native='buttonClick("balances")'>
-      <v-icon>account_balance</v-icon> Send
-    </v-btn>
-    <v-btn small round @click.native='buttonClick("donate")'>
-      <v-icon>account_balance</v-icon>Donate
-    </v-btn>
-    <v-btn small round @click.native='buttonClick("coin-market")'>
-      <v-icon>account_balance</v-icon>Coin Market
-    </v-btn>
-    <v-btn small round @click.native='buttonClick("quit")'>
-      <v-icon>account_balance</v-icon> Quit
-    </v-btn>
+    <div v-if='showMenu' class='overlay-menu' @click='showMenu = false'>
+      <v-btn small dark @click.native='buttonClick("ticker")'>
+        Ticker
+      </v-btn>
+      <v-btn small dark @click.native='buttonClick("send")'>
+        Send
+      </v-btn>
+      <v-btn small dark @click.native='buttonClick("donate")'>
+        Donate
+      </v-btn>
+      <v-btn small dark @click.native='buttonClick("coin-market")'>
+        Coin Market
+      </v-btn>
+      <v-btn small dark @click.native='buttonClick("quit")'>
+        <v-icon>close</v-icon> Quit
+      </v-btn>
+    </div>
   </div>
 
 </div>
@@ -111,32 +111,52 @@ export default {
 
       return this._serverAPI
     },
+    setWindowSizeForMode(id) {
+      switch (id) {
+        case 'menu':
+          Helper.setWindowSize(300, 250)
+          break
+        case 'quit':
+          break
+        case 'send':
+          Helper.setWindowSize(400, 400, false)
+          break
+        case 'ticker':
+          Helper.setWindowSize(160, 80, false)
+          break
+        default:
+          console.log('buttonClick not handled: ' + id)
+      }
+    },
     buttonClick(id) {
       switch (id) {
         case 'menu':
-          Helper.setWindowSize(400, 300)
-          this.showMenu = true
+          this.showMenu = !this.showMenu
+
+          if (this.showMenu) {
+            this.setWindowSizeForMode(id)
+          } else {
+            this.setWindowSizeForMode(this.dialogMode)
+          }
           break
         case 'quit':
           Helper.quitApp()
           break
         case 'send':
-          Helper.setWindowSize(400, 400, false)
-          this.dialogMode = 'balances'
+          this.dialogMode = id
+          this.setWindowSizeForMode(id)
           break
         case 'ticker':
-          Helper.setWindowSize(160, 80, false)
-          this.dialogMode = 'ticker'
-          break
-        case 'balances':
-          Helper.setWindowSize(400, 200, false)
-          this.dialogMode = 'main'
+          this.dialogMode = id
+          this.setWindowSizeForMode(id)
           break
         case 'donate':
           shell.openExternal('https://stellarkit.io/#/donate')
+          this.setWindowSizeForMode(this.dialogMode)
           break
         case 'coin-market':
           shell.openExternal('https://coinmarketcap.com/')
+          this.setWindowSizeForMode(this.dialogMode)
           break
         default:
           console.log('buttonClick not handled: ' + id)
@@ -152,6 +172,11 @@ export default {
 $alpha: 0.7;
 
 .rocket-main {
+    margin: 1px;
+    border-radius: 8px;
+    overflow: hidden;
+
+    position: relative;
     flex: 1;
     display: flex;
     -webkit-app-region: drag;
@@ -175,6 +200,7 @@ $alpha: 0.7;
         }
     }
     .rocket-content {
+        position: relative;
         flex: 1 1 auto;
         background: linear-gradient(to bottom, rgba(24,24,24, $alpha), rgba(0,0,0,$alpha));
         color: rgb(80,255, 80);
@@ -187,27 +213,29 @@ $alpha: 0.7;
             flex-direction: column;
             overflow: hidden;
         }
-    }
-    .overlay-menu {
-        position: absolute;
-        z-index: 1;
-        background: rgba(0,0,0,.8);
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        -webkit-app-region: no-drag;
 
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 0 20px;
+        .overlay-menu {
+            position: absolute;
+            z-index: 1;
+            background: rgba(0,0,0,.8);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
 
-        button {
-            min-width: 200px;
-            i {
-                margin-right: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            button {
+                -webkit-app-region: no-drag;
+                font-size: 11px;
+
+                min-width: 140px;
+                i {
+                    margin-right: 6px;
+                }
             }
         }
     }
