@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "repository": "github.com/StellarKit/stellar-rocket",
+  "description": "Floating stock ticker and simple Stellar wallet",
   "homepage": "https://stellarkit.io",
   "author": {
     "name": "Steve Gehrman",
@@ -17,11 +18,10 @@
   },
   "build": {
     "asar": true,
-    "compression": "store",
-    "npmRebuild": false,
+    "productName": "Stellar Rocket",
     "appId": "io.stellarkit.stellar-rocket",
     "win": {
-      "target": "portable"
+      "target": "nsis"
     }
   },
   "dependencies": {
