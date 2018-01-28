@@ -1,7 +1,13 @@
 {
-  "name": "stellar-client",
-  "version": "0.0.0",
+  "name": "stellar-rocket",
+  "version": "1.0.0",
   "license": "MIT",
+  "repository": "github.com/StellarKit/stellar-rocket",
+  "homepage": "https://stellarkit.io",
+  "author": {
+    "name": "Steve Gehrman",
+    "email": "steve@distantfutu.re"
+  },
   "scripts": {
     "dev": "electron-webpack dev",
     "compile": "electron-webpack",
@@ -10,7 +16,10 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "build": {
-    "appId": "io.stellarkit.stellar-client",
+    "asar": true,
+    "compression": "store",
+    "npmRebuild": false,
+    "appId": "io.stellarkit.stellar-rocket",
     "win": {
       "target": "portable"
     }
