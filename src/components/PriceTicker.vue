@@ -67,7 +67,7 @@ export default {
             color: rgb(100,255,100);
         }
         &.percent-down {
-            color: red;
+            color: rgb(255, 80,80);
         }
 
         span.dim-title {
