@@ -6,37 +6,39 @@
     </v-btn>
   </div>
 
-  <div class='rocket-content'>
-    <div v-if="dialogMode === 'main'">
-      Main
-      <div class='rocket-list' v-for="item in balances" :key="item.title" @click="buttonClick(item.cmd)">
-        <div>{{ item.title }}</div>
+  <transition v-on:enter="animateEnter" v-bind:css="false">
+    <div v-if='showContent' class='rocket-content'>
+      <div v-if="dialogMode === 'main'">
+        Main
+        <div class='rocket-list' v-for="item in balances" :key="item.title" @click="buttonClick(item.cmd)">
+          <div>{{ item.title }}</div>
+        </div>
+      </div>
+      <div v-else-if="dialogMode === 'send'">
+        Balances
+      </div>
+      <div v-else-if="dialogMode === 'ticker'">
+        <ticker-component />
+      </div>
+      <div v-else-if="dialogMode === 'menu'" class='content-menu'>
+        <v-btn small dark @click.native='buttonClick("ticker")'>
+          Ticker
+        </v-btn>
+        <v-btn small dark @click.native='buttonClick("send")'>
+          Send
+        </v-btn>
+        <v-btn small dark @click.native='buttonClick("donate")'>
+          Donate
+        </v-btn>
+        <v-btn small dark @click.native='buttonClick("coin-market")'>
+          Coin Market
+        </v-btn>
+        <v-btn small dark @click.native='buttonClick("quit")'>
+          <v-icon>close</v-icon> Quit
+        </v-btn>
       </div>
     </div>
-    <div v-else-if="dialogMode === 'send'">
-      Balances
-    </div>
-    <div v-else-if="dialogMode === 'ticker'">
-      <ticker-component />
-    </div>
-    <div v-else-if="dialogMode === 'menu'" class='content-menu'>
-      <v-btn small dark @click.native='buttonClick("ticker")'>
-        Ticker
-      </v-btn>
-      <v-btn small dark @click.native='buttonClick("send")'>
-        Send
-      </v-btn>
-      <v-btn small dark @click.native='buttonClick("donate")'>
-        Donate
-      </v-btn>
-      <v-btn small dark @click.native='buttonClick("coin-market")'>
-        Coin Market
-      </v-btn>
-      <v-btn small dark @click.native='buttonClick("quit")'>
-        <v-icon>close</v-icon> Quit
-      </v-btn>
-    </div>
-  </div>
+  </transition>
 
 </div>
 </template>
@@ -49,6 +51,10 @@ import {
   StellarAPIServer,
   StellarAPI
 } from 'stellar-js-utils'
+import {
+  TweenMax,
+  Power2
+} from 'gsap'
 
 export default {
   components: {
@@ -58,6 +64,7 @@ export default {
     return {
       savedDialogMode: '',
       dialogMode: '',
+      showContent: false,
       status: '',
       accounts: [{
           name: 'Wallet',
@@ -97,6 +104,19 @@ export default {
     this.updateDialogMode('ticker')
   },
   methods: {
+    animateEnter(el, done) {
+      TweenMax.set(el, {
+        autoAlpha: 0,
+        y: 40
+      })
+
+      TweenMax.to(el, 0.3, {
+        autoAlpha: 1,
+        y: 0,
+        ease: Power2.easeIn,
+        onComplete: done
+      })
+    },
     server() {
       if (!this._stellarAPIServer) {
         this._stellarAPIServer = new StellarAPIServer('https://horizon-testnet.stellar.org', true)
@@ -113,24 +133,34 @@ export default {
       return this._serverAPI
     },
     updateDialogMode(id) {
-      switch (id) {
+      let menuID = id
+
+      switch (menuID) {
         case 'menu':
-          if (this.dialogMode === id) {
-            this.dialogMode = this.savedDialogMode
-            this.setWindowSizeForMode(this.dialogMode)
+          if (this.dialogMode === menuID) {
+            // clicked menu twice, restore from saved
+            menuID = this.savedDialogMode
           } else {
             this.savedDialogMode = this.dialogMode
-            this.setWindowSizeForMode(id)
           }
           break
         case 'send':
         case 'ticker':
-          this.setWindowSizeForMode(id)
           break
         default:
           console.log('buttonClick not handled: ' + id)
       }
-      this.dialogMode = id
+
+      this.showContent = false
+      this.$nextTick(() => {
+        this.setWindowSizeForMode(menuID)
+
+        setTimeout(() => {
+          this.showContent = true
+
+          this.dialogMode = menuID
+        }, 200)
+      })
     },
     setWindowSizeForMode(id) {
       switch (id) {
@@ -182,6 +212,7 @@ $alpha: 0.7;
     margin: 1px;
     border-radius: 8px;
     overflow: hidden;
+    background: rgba(0,0,0, $alpha);
 
     position: relative;
     flex: 1;
@@ -193,7 +224,6 @@ $alpha: 0.7;
 
         flex: 0 0 auto;
         flex-direction: column;
-        background: rgba(0,0,0, $alpha);
 
         button {
             margin: 0;
@@ -209,7 +239,6 @@ $alpha: 0.7;
     .rocket-content {
         position: relative;
         flex: 1 1 auto;
-        background: rgba(0,0,0, $alpha);
         color: rgb(80,255, 80);
         display: flex;
         flex-direction: column;

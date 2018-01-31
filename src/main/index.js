@@ -124,6 +124,8 @@ class MainApp {
       frame: false,
       title: 'Stellar Rocket',
       transparent: true,
+      hasShadow: true,
+      // focusable: false,
       resizable: false,
       webPreferences: {
         overlayScrollbars: true,
