@@ -54,6 +54,14 @@ class MainApp {
       event.returnValue = result
     })
 
+    ipcMain.on('openDonateWindow', (event, key) => {
+      if (!this.donateWindow) {
+        this.donateWindow = this.createDonateWindow()
+      } else {
+        this.donateWindow.focus()
+      }
+    })
+
     // async, no event.returnValue needed
     ipcMain.on('set', (event, key, newVal) => {
       this.settings.set(key, newVal)
@@ -118,7 +126,7 @@ class MainApp {
     const window = new BrowserWindow({
       x: x,
       y: y,
-      show: true,
+      show: false,
       width: width,
       height: height,
       frame: false,
@@ -133,6 +141,12 @@ class MainApp {
       }
     })
 
+    window.type = 'main'
+
+    window.once('ready-to-show', () => {
+      window.show()
+    })
+
     window.setAlwaysOnTop(true)
 
     // no ugly menus on this window, hit alt to toggle
@@ -143,6 +157,7 @@ class MainApp {
     // points to `webpack-dev-server` in development
     // points to `index.html` in production
     const url = isDevelopment ? `http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}` : `file://${__dirname}/index.html`
+    window.loadURL(url)
 
     // if (isDevelopment) {
     //   window.webContents.openDevTools()
@@ -163,17 +178,8 @@ class MainApp {
       this.settings.set(this.prefKey('win_y'), window.getBounds().y)
     })
 
-    window.loadURL(url)
-
     window.on('closed', () => {
       this.mainWindow = null
-    })
-
-    window.webContents.on('devtools-opened', () => {
-      window.focus()
-      setImmediate(() => {
-        window.focus()
-      })
     })
 
     return window
@@ -191,6 +197,63 @@ class MainApp {
     if (!this.settings.get(this.prefKey('win_height'))) {
       this.settings.set(this.prefKey('win_height'), this.defaultHeight)
     }
+  }
+
+  // =======================================================
+  // donate window
+
+  createDonateWindow() {
+    const width = 500
+    const height = 400
+
+    // Construct new BrowserWindow
+    const window = new BrowserWindow({
+      show: false,
+      width: width,
+      height: height,
+      frame: true,
+      title: 'Donate',
+      transparent: true,
+      hasShadow: true,
+      resizable: false,
+      webPreferences: {
+        overlayScrollbars: true,
+        overlayFullscreenVideo: true
+      }
+    })
+
+    window.type = 'donate'
+
+    window.once('ready-to-show', () => {
+      window.show()
+    })
+
+    window.setAlwaysOnTop(true)
+
+    // no ugly menus on this window, hit alt to toggle
+    window.setAutoHideMenuBar(true)
+    window.setMenuBarVisibility(false)
+
+    // Set url for `win`
+    // points to `webpack-dev-server` in development
+    // points to `index.html` in production
+    const url = isDevelopment ? `http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}` : `file://${__dirname}/index.html`
+    window.loadURL(url)
+
+    // if (isDevelopment) {
+    //   window.webContents.openDevTools()
+    // }
+
+    // prevent window name changes
+    window.on('page-title-updated', (event) => {
+      event.preventDefault()
+    })
+
+    window.on('closed', () => {
+      this.donateWindow = null
+    })
+
+    return window
   }
 }
 

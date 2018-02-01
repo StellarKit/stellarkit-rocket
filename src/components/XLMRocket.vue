@@ -47,6 +47,7 @@
 import Helper from '../js/helper.js'
 import PriceTicker from './PriceTicker.vue'
 const shell = require('electron').shell
+const ipcRenderer = require('electron').ipcRenderer
 import {
   StellarAPIServer,
   StellarAPI
@@ -185,7 +186,9 @@ export default {
           this.updateDialogMode(id)
           break
         case 'donate':
-          shell.openExternal('https://stellarkit.io/#/donate')
+          // shell.openExternal('https://stellarkit.io/#/donate')
+          ipcRenderer.send('openDonateWindow')
+
           this.updateDialogMode(this.savedDialogMode)
           break
         case 'coin-market':

@@ -1,20 +1,38 @@
 <template>
 <v-app>
-  <div class='window-wrapper'>
+  <div v-if='windowType === "main"' class='rocket-window'>
     <xlm-rocket />
+  </div>
+  <div v-else-if='windowType === "donate"' class='normal-window'>
+    <donate-view :ping='showDonatePing' :nodeEnv=true :destinationPublicKey='destinationPublicKey' />
+  </div>
+  <div v-else class='normal-window'>
+    Something is wrong
   </div>
 </v-app>
 </template>
 
 <script>
 import XLMRocket from './components/XLMRocket.vue'
+const BrowserWindow = require('electron').remote.getCurrentWindow()
+import {
+  DonateView
+} from 'stellar-js-utils'
 
 export default {
   components: {
-    'xlm-rocket': XLMRocket
+    'xlm-rocket': XLMRocket,
+    'donate-view': DonateView
   },
   data() {
-    return {}
+    return {
+      windowType: '',
+      showDonatePing: false,
+      destinationPublicKey: 'GCYQSB3UQDSISB5LKAL2OEVLAYJNIR7LFVYDNKRMLWQKDCBX4PU3Z6JP'
+    }
+  },
+  mounted() {
+    this.windowType = BrowserWindow.type
   },
   methods: {}
 }
@@ -45,7 +63,7 @@ html {
 </style>
 
 <style scoped lang='scss'>
-.window-wrapper {
+.rocket-window {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -54,5 +72,11 @@ html {
     border-radius: 8px;
     overflow: hidden;
     border: solid 1px rgba(255,255,255, .7);
+}
+
+.normal-window {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 </style>
