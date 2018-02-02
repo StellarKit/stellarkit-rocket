@@ -56,9 +56,25 @@ class MainApp {
 
     ipcMain.on('openDonateWindow', (event, key) => {
       if (!this.donateWindow) {
-        this.donateWindow = this.createDonateWindow()
+        this.donateWindow = this.createUtilityWindow('Donate', 'donate')
+
+        this.donateWindow.on('closed', () => {
+          this.donateWindow = null
+        })
       } else {
         this.donateWindow.focus()
+      }
+    })
+
+    ipcMain.on('openPaymentWindow', (event, key) => {
+      if (!this.paymentWindow) {
+        this.paymentWindow = this.createUtilityWindow('Send Payment', 'payment')
+
+        this.paymentWindow.on('closed', () => {
+          this.paymentWindow = null
+        })
+      } else {
+        this.paymentWindow.focus()
       }
     })
 
@@ -202,7 +218,7 @@ class MainApp {
   // =======================================================
   // donate window
 
-  createDonateWindow() {
+  createUtilityWindow(title, type) {
     const width = 500
     const height = 400
 
@@ -212,7 +228,7 @@ class MainApp {
       width: width,
       height: height,
       frame: true,
-      title: 'Donate',
+      title: title,
       transparent: true,
       hasShadow: true,
       resizable: false,
@@ -222,7 +238,7 @@ class MainApp {
       }
     })
 
-    window.type = 'donate'
+    window.type = type
 
     window.once('ready-to-show', () => {
       window.show()
@@ -247,10 +263,6 @@ class MainApp {
     // prevent window name changes
     window.on('page-title-updated', (event) => {
       event.preventDefault()
-    })
-
-    window.on('closed', () => {
-      this.donateWindow = null
     })
 
     return window

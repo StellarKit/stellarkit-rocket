@@ -4,7 +4,10 @@
     <xlm-rocket />
   </div>
   <div v-else-if='windowType === "donate"' class='normal-window'>
-    <donate-view :ping='showDonatePing' :nodeEnv=true :destinationPublicKey='destinationPublicKey' />
+    <donate-view :ping='showDonatePing' :nodeEnv=true :donationPublicKey='donationPublicKey' />
+  </div>
+  <div v-else-if='windowType === "payment"' class='normal-window'>
+    <donate-view :ping='showDonatePing' :nodeEnv=true />
   </div>
   <div v-else class='normal-window'>
     Something is wrong
@@ -28,7 +31,7 @@ export default {
     return {
       windowType: '',
       showDonatePing: false,
-      destinationPublicKey: 'GCYQSB3UQDSISB5LKAL2OEVLAYJNIR7LFVYDNKRMLWQKDCBX4PU3Z6JP'
+      donationPublicKey: 'GCYQSB3UQDSISB5LKAL2OEVLAYJNIR7LFVYDNKRMLWQKDCBX4PU3Z6JP'
     }
   },
   mounted() {

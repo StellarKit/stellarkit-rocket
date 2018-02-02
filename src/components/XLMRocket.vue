@@ -25,7 +25,7 @@
           Ticker
         </v-btn>
         <v-btn small dark @click.native='buttonClick("send")'>
-          Send
+          Send Lumens
         </v-btn>
         <v-btn small dark @click.native='buttonClick("donate")'>
           Donate
@@ -169,7 +169,6 @@ export default {
           Helper.setWindowSize(300, 250)
           break
         case 'send':
-          Helper.setWindowSize(400, 400, false)
           break
         case 'ticker':
           Helper.setWindowSize(160, 80, false)
@@ -182,12 +181,16 @@ export default {
       switch (id) {
         case 'ticker':
         case 'menu':
-        case 'send':
           this.updateDialogMode(id)
           break
         case 'donate':
           // shell.openExternal('https://stellarkit.io/#/donate')
           ipcRenderer.send('openDonateWindow')
+
+          this.updateDialogMode(this.savedDialogMode)
+          break
+        case 'send':
+          ipcRenderer.send('openPaymentWindow')
 
           this.updateDialogMode(this.savedDialogMode)
           break
