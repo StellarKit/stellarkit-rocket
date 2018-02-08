@@ -19,13 +19,13 @@
 import XLMRocket from './components/XLMRocket.vue'
 const BrowserWindow = require('electron').remote.getCurrentWindow()
 import {
-  DonateView
+  PaymentView
 } from 'stellar-js-utils'
 
 export default {
   components: {
     'xlm-rocket': XLMRocket,
-    'donate-view': DonateView
+    'donate-view': PaymentView
   },
   data() {
     return {
