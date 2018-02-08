@@ -49,7 +49,7 @@ import PriceTicker from './PriceTicker.vue'
 const shell = require('electron').shell
 const ipcRenderer = require('electron').ipcRenderer
 import {
-  StellarAPIServer,
+  HorizonServer,
   StellarAPI
 } from 'stellar-js-utils'
 import {
@@ -119,12 +119,12 @@ export default {
       })
     },
     server() {
-      if (!this._stellarAPIServer) {
-        this._stellarAPIServer = new StellarAPIServer('https://horizon-testnet.stellar.org', true)
-        // this._stellarAPIServer = new StellarAPIServer('https://horizon.stellar.org', false)
+      if (!this._horizonServer) {
+        this._horizonServer = new HorizonServer('https://horizon-testnet.stellar.org', true)
+        // this._horizonServer = new HorizonServer('https://horizon.stellar.org', false)
       }
 
-      return this._stellarAPIServer
+      return this._horizonServer
     },
     serverAPI() {
       if (!this._serverAPI) {

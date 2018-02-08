@@ -1,19 +1,19 @@
  import Helper from '../js/helper.js'
  import {
-   StellarAPIServer,
+   HorizonServer,
    StellarAPI
  } from 'stellar-js-utils'
 
  export default class StellarServer {
    constructor() {
-     this._stellarAPIServer = new StellarAPIServer('https://horizon-testnet.stellar.org', true)
-     // this._stellarAPIServer = new StellarAPIServer('https://horizon.stellar.org', false)
+     this._horizonServer = new HorizonServer('https://horizon-testnet.stellar.org', true)
+     // this._horizonServer = new HorizonServer('https://horizon.stellar.org', false)
 
-     this._serverAPI = new StellarAPI(this._stellarAPIServer)
+     this._serverAPI = new StellarAPI(this._horizonServer)
    }
 
    server() {
-     return this._stellarAPIServer.server()
+     return this._horizonServer.server()
    }
 
    serverAPI() {
@@ -21,6 +21,6 @@
    }
 
    serverURL() {
-     return this._stellarAPIServer.serverURL()
+     return this._horizonServer.serverURL()
    }
  }
