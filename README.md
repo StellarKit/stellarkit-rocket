@@ -1,4 +1,4 @@
-# Stellar Rocket
+# StellarKit Rocket
 
 Still a work in progress.
 
@@ -12,6 +12,8 @@ To build and run:
 To build installer
 
     npm run dist
+
+Disclaimer: We not affiliated with, or sponsored or endorsed by, the Stellar Development Foundation.
 
 ### Donations
 
